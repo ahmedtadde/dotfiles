@@ -47,6 +47,7 @@
         tcl-8_6
         tk
         gcc
+        libclang
         gnumake
         patch
         # Node.js development
@@ -55,8 +56,6 @@
         lazygit
         alacritty
         kitty
-        google-chrome
-        vscode
         ollama
         slack
         discord
@@ -64,7 +63,25 @@
         obsidian
         rustup
         kubectl
+        go
+        tinygo
         lazydocker
+        postgresql_17
+        # Container and Kubernetes tools
+        minikube
+        podman
+        podman-compose
+        qemu    # Required for podman machine
+        # Development tools
+        pkg-config
+        # GUI applications
+        google-chrome
+        vscode
+                
+        # Development libraries and tools
+        darwin.libiconv
+        darwin.apple_sdk.frameworks.Security
+        darwin.apple_sdk.frameworks.SystemConfiguration
       ];
 
       nix.settings.experimental-features = "nix-command flakes";
@@ -80,6 +97,24 @@
           export NVM_DIR="$HOME/.nvm"
           [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
           [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+          # Development environment settings
+          export LIBRARY_PATH="${pkgs.darwin.libiconv}/lib"
+          export CPPFLAGS="-I${pkgs.darwin.libiconv}/include"
+          export LDFLAGS="-L${pkgs.darwin.libiconv}/lib -liconv"
+          
+          # For pkg-config to find libiconv
+          export PKG_CONFIG_PATH="${pkgs.darwin.libiconv}/lib/pkgconfig:${pkgs.openssl.dev}/lib/pkgconfig"
+          
+          # Ensure rustc can find the libraries
+          export RUSTFLAGS="-L ${pkgs.darwin.libiconv}/lib -l iconv"
+
+          # Podman configuration
+          export DOCKER_HOST="unix://$HOME/.local/share/containers/podman/machine/podman-machine-default/podman.sock"
+          
+          # Podman aliases for docker compatibility
+          alias docker=podman
+          alias docker-compose=podman-compose
         '';
       };
       system.configurationRevision = self.rev or self.dirtyRev or null;
@@ -97,7 +132,9 @@
 
       homebrew = {
         enable = true;
-        brews = [ "mas" ];
+        brews = [ 
+          "mas"
+        ];
         casks = [];
         masApps = {
           "NordVPN" = 905953485;
@@ -105,7 +142,7 @@
         onActivation.autoUpdate = true;
         onActivation.upgrade = true;
         onActivation.cleanup = "zap";
-      };     
+      };
     };
   in
   {
