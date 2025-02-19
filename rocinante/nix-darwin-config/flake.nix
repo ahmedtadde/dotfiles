@@ -124,7 +124,6 @@
       };
       nixpkgs.hostPlatform = "aarch64-darwin";
       nixpkgs.config.allowUnfree = true;
-      services.nix-daemon.enable = true;
 
       nix.extraOptions = ''
         extra-platforms = x86_64-darwin aarch64-darwin
