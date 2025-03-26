@@ -74,6 +74,7 @@
         qemu    # Required for podman machine
         # Development tools
         pkg-config
+        devbox  # Development environment manager
         # GUI applications
         google-chrome
         vscode
@@ -115,6 +116,10 @@
           # Podman aliases for docker compatibility
           alias docker=podman
           alias docker-compose=podman-compose
+
+          # Devbox configuration
+          export DEVBOX_HOME="$HOME/.devbox"
+          export PATH="$DEVBOX_HOME/bin:$PATH"
         '';
       };
       system.configurationRevision = self.rev or self.dirtyRev or null;
