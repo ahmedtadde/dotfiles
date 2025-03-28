@@ -72,6 +72,7 @@
         podman
         podman-compose
         qemu    # Required for podman machine
+        k9s     # Terminal UI for Kubernetes
         # Development tools
         pkg-config
         devbox  # Development environment manager
@@ -103,6 +104,9 @@
           export LIBRARY_PATH="${pkgs.darwin.libiconv}/lib"
           export CPPFLAGS="-I${pkgs.darwin.libiconv}/include"
           export LDFLAGS="-L${pkgs.darwin.libiconv}/lib -liconv"
+          
+          # Git credential helper configuration
+          git config --global credential.helper osxkeychain
           
           # For pkg-config to find libiconv
           export PKG_CONFIG_PATH="${pkgs.darwin.libiconv}/lib/pkgconfig:${pkgs.openssl.dev}/lib/pkgconfig"
